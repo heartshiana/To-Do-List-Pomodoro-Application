@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>To-Do List with Pomodoro</title>
-
-  <!-- Retro Pixel Font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
   <style>
     body {
       margin: 0;
@@ -29,13 +26,9 @@
       text-align: center;
     }
 
-    h2 {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
+    h2 { font-size: 14px; margin-bottom: 10px; }
 
-    /* To-Do List */
-    input {
+    input, select {
       width: 65%;
       padding: 8px;
       border: 2px solid white;
@@ -44,6 +37,7 @@
       color: #fff;
       font-family: 'Press Start 2P', cursive;
       font-size: 10px;
+      margin-bottom: 5px;
     }
 
     button {
@@ -58,42 +52,13 @@
       margin: 4px;
     }
 
-    button:hover {
-      background: #333;
-    }
+    button:hover { background: #333; }
 
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin-top: 15px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
+    ul { list-style-type: none; padding: 0; margin-top: 15px; max-height: 150px; overflow-y: auto; }
+    li { padding: 6px; margin: 4px 0; background: #222; display: flex; justify-content: space-between; align-items: center; font-size: 10px; }
+    li button { background: red; border: none; color: white; padding: 4px 6px; cursor: pointer; font-size: 10px; }
 
-    li {
-      padding: 6px;
-      margin: 4px 0;
-      background: #222;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 10px;
-    }
-
-    li button {
-      background: red;
-      border: none;
-      color: white;
-      padding: 4px 6px;
-      cursor: pointer;
-      font-size: 10px;
-    }
-
-    /* Pomodoro */
-    #timer {
-      margin-top: 20px;
-      font-size: 18px;
-    }
+    #timer { margin-top: 20px; font-size: 18px; }
   </style>
 </head>
 <body>
@@ -106,6 +71,14 @@
 
     <!-- Pomodoro Timer -->
     <h2>POMODORO TIMER</h2>
+    <select id="workDuration">
+      <option value="25">25 min</option>
+      <option value="50">50 min</option>
+    </select>
+    <select id="breakDuration">
+      <option value="5">5 min break</option>
+      <option value="15">15 min break</option>
+    </select>
     <div id="timer">25:00</div>
     <button onclick="startTimer()">START</button>
     <button onclick="resetTimer()">RESET</button>
@@ -116,7 +89,7 @@
     function addTask() {
       const input = document.getElementById('taskInput');
       const taskText = input.value.trim();
-      if (taskText === '') return;
+      if (!taskText) return;
 
       const li = document.createElement('li');
       li.textContent = taskText;
@@ -130,39 +103,85 @@
       input.value = '';
     }
 
-    // Pomodoro
+    // Pomodoro Timer
     let timer;
-    let timeLeft = 25 * 60; // 25 min
+    let timeLeft = 25 * 60; 
     let isRunning = false;
 
     function updateTimerDisplay() {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
       document.getElementById('timer').textContent =
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
     }
 
     function startTimer() {
-      if (isRunning) return;
-      isRunning = true;
+  if (isRunning) return;
+  isRunning = true;
 
-      timer = setInterval(() => {
-        if (timeLeft > 0) {
-          timeLeft--;
-          updateTimerDisplay();
-        } else {
-          clearInterval(timer);
-          isRunning = false;
-          alert("Time's up! Take a 5-minute break.");
-          timeLeft = 5 * 60; // switch to break
-          updateTimerDisplay();
-        }
-      }, 1000);
+  const workMinutes = parseInt(document.getElementById('workDuration').value);
+  const breakMinutes = parseInt(document.getElementById('breakDuration').value);
+  if (timeLeft === 0) timeLeft = workMinutes * 60;
+  updateTimerDisplay();
+
+  timer = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerDisplay();
+    } else {
+      clearInterval(timer);
+      isRunning = false;
+
+      // Open custom popup instead of alert
+      const popup = window.open('', '', 'width=400,height=200');
+      popup.document.write(`
+        <html>
+          <head>
+            <title>Break Done!</title>
+            <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+            <style>
+              body {
+                margin:0;
+                background:#000;
+                color:#fff;
+                font-family:'Press Start 2P', cursive;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                flex-direction:column;
+                text-align:center;
+              }
+              button {
+                margin-top:20px;
+                padding:10px 20px;
+                font-family:'Press Start 2P', cursive;
+                font-size:10px;
+                border:2px solid white;
+                background:#000;
+                color:white;
+                cursor:pointer;
+              }
+              button:hover { background:#333; }
+            </style>
+          </head>
+          <body>
+            <div>Oh! Your break is done.<br>Start working again!</div>
+            <button onclick="window.close()">OK</button>
+          </body>
+        </html>
+      `);
+
+      // Start break timer
+      timeLeft = breakMinutes * 60;
+      updateTimerDisplay();
     }
+  }, 1000);
+}
 
     function resetTimer() {
       clearInterval(timer);
-      timeLeft = 25 * 60;
+      const workMinutes = parseInt(document.getElementById('workDuration').value);
+      timeLeft = workMinutes * 60;
       isRunning = false;
       updateTimerDisplay();
     }
