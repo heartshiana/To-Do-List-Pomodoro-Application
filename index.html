@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List with Pomodoro</title>
+
+  <!-- Retro Pixel Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      filter: grayscale(100%);
+    }
+
+    #app {
+      width: 420px;
+      background: #111;
+      padding: 20px;
+      border: 4px solid white;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* To-Do List */
+    input {
+      width: 65%;
+      padding: 8px;
+      border: 2px solid white;
+      border-radius: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: 2px solid white;
+      background: #000;
+      color: white;
+      border-radius: 0;
+      cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      margin: 4px;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    li {
+      padding: 6px;
+      margin: 4px 0;
+      background: #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+    }
+
+    li button {
+      background: red;
+      border: none;
+      color: white;
+      padding: 4px 6px;
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    /* Pomodoro */
+    #timer {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- To-Do List -->
+    <h2>TO-DO LIST</h2>
+    <input type="text" id="taskInput" placeholder="Enter task" />
+    <button onclick="addTask()">ADD</button>
+    <ul id="taskList"></ul>
+
+    <!-- Pomodoro Timer -->
+    <h2>POMODORO TIMER</h2>
+    <div id="timer">25:00</div>
+    <button onclick="startTimer()">START</button>
+    <button onclick="resetTimer()">RESET</button>
+  </div>
+
+  <script>
+    // To-Do List
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      const taskText = input.value.trim();
+      if (taskText === '') return;
+
+      const li = document.createElement('li');
+      li.textContent = taskText;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'X';
+      removeBtn.onclick = () => li.remove();
+
+      li.appendChild(removeBtn);
+      document.getElementById('taskList').appendChild(li);
+      input.value = '';
+    }
+
+    // Pomodoro
+    let timer;
+    let timeLeft = 25 * 60; // 25 min
+    let isRunning = false;
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer').textContent =
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+
+      timer = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timer);
+          isRunning = false;
+          alert("Time's up! Take a 5-minute break.");
+          timeLeft = 5 * 60; // switch to break
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      timeLeft = 25 * 60;
+      isRunning = false;
+      updateTimerDisplay();
+    }
+
+    updateTimerDisplay();
+  </script>
+</body>
+</html>

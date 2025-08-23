@@ -1,0 +1,16 @@
+{
+  "name": "madly-ball-apologize-763ms",
+  "productName": "madly-ball-apologize-763ms",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "heart",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "37.2.5"
+  }
+}
