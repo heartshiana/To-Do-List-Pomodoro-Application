@@ -1,4 +1,4 @@
-# TodoPomodoro App
+# To-do Pomodoro App
 
 A retro-styled To-Do List with an integrated Pomodoro Timer built with **HTML, CSS, JavaScript**, and **Electron**.  
 It allows users to manage tasks while keeping track of work and break intervals.
@@ -34,3 +34,9 @@ It allows users to manage tasks while keeping track of work and break intervals.
 
 ```bash
 cd D:\todo-app
+
+
+
+https://github.com/user-attachments/assets/1205e027-0c0a-4ac8-8787-887d0e009cdc
+
+
